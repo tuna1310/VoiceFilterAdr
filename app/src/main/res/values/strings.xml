@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Speak Right: Pronounce Challenge</string>
+    <string name="app_short_name">Speak Right</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_start">Get Started</string>
+
+    <string name="onboarding_title_1">Fun Pronunciation Challenge</string>
+    <string name="onboarding_desc_1">Challenge yourself with tricky English words using a lively selfie camera filter.</string>
+
+    <string name="onboarding_title_2">Smart Voice Scoring</string>
+    <string name="onboarding_desc_2">Intelligent speech recognition scores your pronunciation from 0 to 100 with star ratings.</string>
+
+    <string name="onboarding_title_3">Build Your Daily Streak</string>
+    <string name="onboarding_desc_3">Keep your daily practice streak alive and master words across exciting topics.</string>
+
+    <!-- Permissions -->
+    <string name="permission_title">Permissions Required</string>
+    <string name="permission_subtitle">To get started, Speak Right needs the following permissions:</string>
+    <string name="permission_mic_title">Microphone (Required)</string>
+    <string name="permission_mic_desc">Used to listen and score your English pronunciation.</string>
+    <string name="permission_camera_title">Front Camera (Optional)</string>
+    <string name="permission_camera_desc">Shows a selfie video preview with playful filter stickers. You can still play without camera.</string>
+    <string name="permission_grant_btn">Grant &amp; Continue</string>
+    <string name="permission_camera_denied_notice">Using animated gradient background (Camera disabled).</string>
+
+    <!-- Home -->
+    <string name="home_streak_format">Streak: %1$d days 🔥</string>
+    <string name="home_score_format">Total Score: %1$d</string>
+    <string name="home_stars_format">%1$d ⭐</string>
+    <string name="home_level_basic">Basic</string>
+    <string name="home_level_medium">Medium</string>
+    <string name="home_level_advanced">Advanced</string>
+    <string name="home_topic_title">Topic Categories</string>
+    <string name="home_unlock_all">Unlock All Topics</string>
+    <string name="home_unlock_success">All topics unlocked successfully!</string>
+
+    <!-- Subjects -->
+    <string name="subject_cinema">Movies &amp; Cinema</string>
+    <string name="subject_music">Music &amp; Arts</string>
+    <string name="subject_food">Food &amp; Cuisine</string>
+    <string name="subject_travel">Places &amp; Travel</string>
+    <string name="subject_science">Science &amp; Tech</string>
+    <string name="subject_life">Daily Life</string>
+    <string name="subject_colors">Colors</string>
+    <string name="subject_animals">Animals</string>
+    <string name="subject_vehicles">Vehicles</string>
+    <string name="subject_kitchen">Kitchen</string>
+    <string name="subject_countries">Countries</string>
+    <string name="subject_weekdays">Weekdays</string>
+    <string name="subject_months">Months</string>
+    <string name="subject_slang">Slang &amp; Brainrot</string>
+
+    <!-- Mode BottomSheet & Selection -->
+    <string name="mode_select_title">Select Difficulty Mode</string>
+    <string name="mode_easy_name">Easy</string>
+    <string name="mode_easy_desc">15s / word • Pass score: 50 ⭐</string>
+    <string name="mode_medium_name">Medium</string>
+    <string name="mode_medium_desc">10s / word • Pass score: 65 ⭐⭐</string>
+    <string name="mode_hard_name">Hard</string>
+    <string name="mode_hard_desc">6s / word • Pass score: 80 ⭐⭐⭐</string>
+    <string name="mode_start_btn">Start Challenge</string>
+
+    <!-- Challenge Screen -->
+    <string name="challenge_tap_to_speak">Tap mic to speak</string>
+    <string name="challenge_listening">Listening to you...</string>
+    <string name="challenge_processing">Analyzing pronunciation...</string>
+    <string name="challenge_listen_sample">Listen to sample</string>
+    <string name="challenge_tip_prefix">Tip: %1$s</string>
+    <string name="challenge_time_up">Time\'s up!</string>
+    <string name="challenge_switch_camera">Toggle Camera</string>
+    <string name="challenge_exit_confirm">Quit challenge?</string>
+
+    <!-- Results & Scoring -->
+    <string name="score_excellent">Excellent! Perfect!</string>
+    <string name="score_good">Great job! Clear pronunciation!</string>
+    <string name="score_almost">Almost there, mind the ending sound!</string>
+    <string name="score_retry">Keep going, try once more!</string>
+    <string name="score_not_heard">Didn\'t catch that, let\'s try again!</string>
+
+    <string name="result_title">Challenge Result</string>
+    <string name="result_target_word">Target word:</string>
+    <string name="result_spoken_word">You pronounced:</string>
+    <string name="result_score_points">%1$d / 100 points</string>
+    <string name="result_retry_btn">Try Again</string>
+    <string name="result_next_btn">Next Word</string>
+    <string name="result_share_btn">Share Result</string>
+    <string name="result_home_btn">Home</string>
+    <string name="share_text_template">I scored %1$d/100 pronouncing \'%2$s\' in Speak Right! Take the challenge: %3$s</string>
+
+    <!-- Voice Runner / Game State Machine (A3) -->
+    <string name="game_countdown_ready">READY!</string>
+    <string name="game_lives_format">Lives: %1$d</string>
+    <string name="game_combo_format">🔥 Combo x%1$d</string>
+    <string name="game_score_format">Score: %1$d</string>
+    <string name="game_pause_title">Challenge Paused</string>
+    <string name="game_pause_resume">Resume</string>
+    <string name="game_pause_quit">Quit</string>
+    <string name="game_over_out_of_lives">Out of 3 lives!</string>
+    <string name="game_over_time_up">Time is up!</string>
+    <string name="game_over_completed">Completed all words!</string>
+    <string name="game_correct_banner">🎉 Correct! +%1$d pts</string>
+    <string name="game_wrong_collision">💥 Collision! Lost 1 life</string>
+
+    <!-- Mode Labels & Category Rush & Tongue Twister (A4) -->
+    <string name="mode_voice_runner_title">Voice Runner</string>
+    <string name="mode_tongue_twister_title">Tongue Twister</string>
+    <string name="mode_category_rush_title">Category Rush</string>
+    <string name="mode_voice_runner_desc">Cross 3D gates with 3 lives</string>
+    <string name="mode_tongue_twister_desc">Pronounce tongue twisters fluently</string>
+    <string name="mode_category_rush_desc">30s rapid-fire words, no repeats</string>
+    <string name="category_rush_counter_format">Correct: %1$d words</string>
+    <string name="category_rush_duplicate_notice">Word \'%1$s\' already spoken!</string>
+    <string name="tongue_twister_fluency_format">Fluency: %1$d%%</string>
+    <string name="dialog_select_mode_title">Select Mode &amp; Difficulty</string>
+    <string name="dialog_start_challenge">Start Challenge</string>
+    <string name="difficulty_beginner_label">Easy (3.0s)</string>
+    <string name="difficulty_intermediate_label">Medium (2.5s)</string>
+    <string name="difficulty_expert_label">Hard (2.0s)</string>
+
+    <!-- Settings (A7) -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sound_title">Sound &amp; Effects</string>
+    <string name="settings_sfx_name">Sound Effects (SFX)</string>
+    <string name="settings_sfx_desc">Ding, buzz, and collision sounds</string>
+    <string name="settings_bgm_name">Background Music (BGM)</string>
+    <string name="settings_bgm_desc">Play cheerful background music during challenge</string>
+    <string name="settings_engine_title">Speech Engine</string>
+    <string name="settings_engine_vosk_name">Vosk Offline (Kaldi)</string>
+    <string name="settings_engine_vosk_desc">On-device, zero latency, privacy-first (Recommended)</string>
+    <string name="settings_engine_google_name">Google SpeechRecognizer</string>
+    <string name="settings_engine_google_desc">Cloud recognizer fallback, requires internet</string>
+    <string name="settings_permissions_title">Permissions</string>
+    <string name="settings_permission_mic_name">Microphone</string>
+    <string name="settings_permission_camera_name">Camera</string>
+    <string name="settings_permission_granted">Granted</string>
+    <string name="settings_permission_denied">Not granted</string>
+    <string name="settings_permission_open_settings">App Settings</string>
+    <string name="settings_data_safety_title">Data Safety</string>
+    <string name="settings_data_safety_desc">Voice data is processed 100% on your device. We do not track, collect, or share your audio with any server.</string>
+    <string name="settings_about_title">About &amp; Licenses</string>
+    <string name="settings_version_name">Version 1.0.0 (Build 1)</string>
+    <string name="settings_credits_btn">Open Source Credits &amp; Licenses</string>
+    <string name="storage_warning_title">Low Storage Space</string>
+    <string name="storage_warning_desc">Need at least 100MB free disk space to record challenge video.</string>
+
+    <!-- Errors -->
+    <string name="error_audio_permission_required">Microphone permission is required to listen to your voice.</string>
+    <string name="error_speech_not_available">Speech recognition service is not available on this device.</string>
+    <string name="error_no_words_available">No words available for this topic.</string>
+</resources>

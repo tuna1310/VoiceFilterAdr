@@ -1,0 +1,48 @@
+# Built application files
+*.apk
+*.aar
+*.aab
+*.ap_
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+app/build/
+
+# Gradle files
+.gradle/
+
+# Local configuration file (sdk path, etc)
+local.properties
+.env
+
+# Log files and build reports
+*.log
+*_log.txt
+android_baseline_*.txt
+
+# Android Studio / IntelliJ IDEA
+*.iml
+.idea/
+.idea_modules/
+
+# Kotlin & Python caches
+.kotlin/
+.venv/
+__pycache__/
+*.pyc
+
+# Editor configs
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db

@@ -1,0 +1,436 @@
+[
+    {
+        "id":  "tc_01",
+        "target":  "red",
+        "candidate":  "red",
+        "category":  "exact",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_02",
+        "target":  "yellow",
+        "candidate":  "Yellow",
+        "category":  "exact_case_insensitive",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_03",
+        "target":  "blue",
+        "candidate":  "  blue  ",
+        "category":  "exact_whitespace",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_04",
+        "target":  "elephant",
+        "candidate":  "elephant!",
+        "category":  "exact_punctuation",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_05",
+        "target":  "crocodile",
+        "candidate":  "crocodil",
+        "category":  "near_match_high_ratio",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_06",
+        "target":  "banana",
+        "candidate":  "banan",
+        "category":  "near_match_medium_ratio",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_07",
+        "target":  "orange",
+        "candidate":  "orenge",
+        "category":  "near_match_medium_ratio",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_08",
+        "target":  "purple",
+        "candidate":  "purpel",
+        "category":  "near_match_low_ratio",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_09",
+        "target":  "cat",
+        "candidate":  "dog",
+        "category":  "wrong",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_10",
+        "target":  "black",
+        "candidate":  "white",
+        "category":  "wrong",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_11",
+        "target":  "car",
+        "candidate":  "airplane",
+        "category":  "wrong",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_12",
+        "target":  "fork",
+        "candidate":  "spoon",
+        "category":  "wrong",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_13",
+        "target":  "green",
+        "candidate":  "uh",
+        "category":  "noise",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_14",
+        "target":  "apple",
+        "candidate":  "hmm ah",
+        "category":  "noise",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_15",
+        "target":  "table",
+        "candidate":  "[unk]",
+        "category":  "noise",
+        "expected":  {
+                         "beginner":  false,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_16",
+        "target":  "write",
+        "candidate":  "right",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "right"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_17",
+        "target":  "right",
+        "candidate":  "write",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "write"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_18",
+        "target":  "sun",
+        "candidate":  "son",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "son"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_19",
+        "target":  "sea",
+        "candidate":  "see",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "see"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_20",
+        "target":  "two",
+        "candidate":  "to",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "to",
+                                  "too"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_21",
+        "target":  "too",
+        "candidate":  "two",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "to",
+                                  "two"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_22",
+        "target":  "their",
+        "candidate":  "there",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "there",
+                                  "they\u0027re"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_23",
+        "target":  "hear",
+        "candidate":  "here",
+        "category":  "homophone",
+        "accepted_variants":  [
+                                  "here"
+                              ],
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_24",
+        "target":  "can\u0027t",
+        "candidate":  "cannot",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_25",
+        "target":  "cannot",
+        "candidate":  "can\u0027t",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_26",
+        "target":  "don\u0027t",
+        "candidate":  "do not",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_27",
+        "target":  "do not",
+        "candidate":  "don\u0027t",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_28",
+        "target":  "won\u0027t",
+        "candidate":  "will not",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_29",
+        "target":  "it\u0027s",
+        "candidate":  "it is",
+        "category":  "contraction",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_30",
+        "target":  "one",
+        "candidate":  "1",
+        "category":  "number_word",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_31",
+        "target":  "two",
+        "candidate":  "2",
+        "category":  "number_word",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_32",
+        "target":  "ten",
+        "candidate":  "10",
+        "category":  "number_word",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  true
+                     }
+    },
+    {
+        "id":  "tc_33",
+        "target":  "ship",
+        "candidate":  "sheep",
+        "category":  "minimal_pair_rejected_expert",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_34",
+        "target":  "sheep",
+        "candidate":  "ship",
+        "category":  "minimal_pair_rejected_expert",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_35",
+        "target":  "fit",
+        "candidate":  "feet",
+        "category":  "minimal_pair_rejected_expert",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  true,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_36",
+        "target":  "pen",
+        "candidate":  "pan",
+        "category":  "minimal_pair_rejected_expert",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    },
+    {
+        "id":  "tc_37",
+        "target":  "cat",
+        "candidate":  "kat",
+        "category":  "phonetic_outside_static_tables_low_ratio",
+        "expected":  {
+                         "beginner":  true,
+                         "intermediate":  false,
+                         "expert":  false
+                     }
+    }
+]
