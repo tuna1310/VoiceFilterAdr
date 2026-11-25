@@ -201,7 +201,7 @@ class ChallengeViewModel(
                 return@launch
             }
 
-            val error = "Không có từ cho subject=${subject.key}, level=${level.key}."
+            val error = "No words available for subject=${subject.key}, level=${level.key}."
             logError(error)
             if (subject == Subject.COLORS) {
                 logWarning("Using Colors-only local fallback for empty Colors list.")
@@ -228,22 +228,22 @@ class ChallengeViewModel(
     private fun getTongueTwistersForLevel(level: DifficultyLevel): List<Word> {
         return when (level) {
             DifficultyLevel.BEGINNER -> listOf(
-                Word("tt_b1", "I scream you scream we all scream for ice cream", "/aɪ skriːm/", "Đọc rõ từng từ scream và cream", "basic", "tongue_twister"),
-                Word("tt_b2", "Red lorry yellow lorry", "/rɛd ˈlɒri ˈjɛloʊ ˈlɒri/", "Phân biệt rõ âm R và L", "basic", "tongue_twister"),
-                Word("tt_b3", "She sells seashells by the seashore", "/ʃiː sɛlz ˈsiːˌʃɛlz baɪ ðə ˈsiːˌʃɔːr/", "Phân biệt âm S nhẹ và SH nặng", "basic", "tongue_twister"),
-                Word("tt_b4", "Blue bluebird on the blue branch", "/bluː ˈbluːˌbɜːrd ɒn ðə bluː bræntʃ/", "Bật âm B và L nhanh dứt khoát", "basic", "tongue_twister")
+                Word("tt_b1", "I scream you scream we all scream for ice cream", "/aɪ skriːm/", "Pronounce scream and cream clearly", "basic", "tongue_twister"),
+                Word("tt_b2", "Red lorry yellow lorry", "/rɛd ˈlɒri ˈjɛloʊ ˈlɒri/", "Distinguish R and L sounds clearly", "basic", "tongue_twister"),
+                Word("tt_b3", "She sells seashells by the seashore", "/ʃiː sɛlz ˈsiːˌʃɛlz baɪ ðə ˈsiːˌʃɔːr/", "Distinguish soft S and SH sounds", "basic", "tongue_twister"),
+                Word("tt_b4", "Blue bluebird on the blue branch", "/bluː ˈbluːˌbɜːrd ɒn ðə bluː bræntʃ/", "Keep B and L crisp and clear", "basic", "tongue_twister")
             )
             DifficultyLevel.INTERMEDIATE -> listOf(
-                Word("tt_i1", "How can a clam cram in a clean cream can", "/haʊ kæn ə klæm kræm ɪn ə kliːn kriːm kæn/", "Uốn lưỡi chuẩn giữa CL và CR", "intermediate", "tongue_twister"),
-                Word("tt_i2", "Peter Piper picked a peck of pickled peppers", "/ˈpiːtər ˈpaɪpər pɪkt ə pɛk ɒv ˈpɪkld ˈpɛpərz/", "Bật hơi âm P mạnh và rõ", "intermediate", "tongue_twister"),
-                Word("tt_i3", "Fuzzy Wuzzy was a bear Fuzzy Wuzzy had no hair", "/ˈfʌzi ˈwʌzi wɒz ə bɛər ˈfʌzi ˈwʌzi hæd noʊ hɛər/", "Luyện âm Z rung thanh quản", "intermediate", "tongue_twister"),
-                Word("tt_i4", "Six slippery snails slid slowly seaward", "/sɪks ˈslɪpəri sneɪlz slɪd ˈsloʊli ˈsiːwərd/", "Giữ luồng hơi âm S và SL liền mạch", "intermediate", "tongue_twister")
+                Word("tt_i1", "How can a clam cram in a clean cream can", "/haʊ kæn ə klæm kræm ɪn ə kliːn kriːm kæn/", "Switch cleanly between CL and CR", "intermediate", "tongue_twister"),
+                Word("tt_i2", "Peter Piper picked a peck of pickled peppers", "/ˈpiːtər ˈpaɪpər pɪkt ə pɛk ɒv ˈpɪkld ˈpɛpərz/", "Aspirate P strongly and clearly", "intermediate", "tongue_twister"),
+                Word("tt_i3", "Fuzzy Wuzzy was a bear Fuzzy Wuzzy had no hair", "/ˈfʌzi ˈwʌzi wɒz ə bɛər ˈfʌzi ˈwʌzi hæd noʊ hɛər/", "Practice voiced Z sound", "intermediate", "tongue_twister"),
+                Word("tt_i4", "Six slippery snails slid slowly seaward", "/sɪks ˈslɪpəri sneɪlz slɪd ˈsloʊli ˈsiːwərd/", "Keep S and SL airflow smooth", "intermediate", "tongue_twister")
             )
             DifficultyLevel.EXPERT -> listOf(
-                Word("tt_e1", "Pad kid pour curd pull cod", "/pæd kɪd pɔːr kɜːrd pʊl kɒd/", "Đảo nhanh giữa P và K không dính âm", "expert", "tongue_twister"),
-                Word("tt_e2", "The thirty three thieves thought that they thrilled the throne", "/ðə ˈθɜːti θriː θiːvz θɔːt ðæt ðeɪ θrɪld ðə θroʊn/", "Luyện âm TH vô thanh và hữu thanh", "expert", "tongue_twister"),
-                Word("tt_e3", "Betty Botter bought some butter but she said the butter is bitter", "/ˈbɛti ˈbɒtər bɔːt sʌm ˈbʌtər/", "Luyện âm T và B tốc độ cao", "expert", "tongue_twister"),
-                Word("tt_e4", "Selfish shellfish should seldom sell selfish shellfish", "/ˈsɛlfɪʃ ˈʃɛlˌfɪʃ ʃʊd ˈsɛldəm sɛl/", "Chuyển liên tục giữa S và SH", "expert", "tongue_twister")
+                Word("tt_e1", "Pad kid pour curd pull cod", "/pæd kɪd pɔːr kɜːrd pʊl kɒd/", "Alternate P and K cleanly", "expert", "tongue_twister"),
+                Word("tt_e2", "The thirty three thieves thought that they thrilled the throne", "/ðə ˈθɜːti θriː θiːvz θɔːt ðæt ðeɪ θrɪld ðə θroʊn/", "Practice voiceless and voiced TH", "expert", "tongue_twister"),
+                Word("tt_e3", "Betty Botter bought some butter but she said the butter is bitter", "/ˈbɛti ˈbɒtər bɔːt sʌm ˈbʌtər/", "Practice fast T and B transitions", "expert", "tongue_twister"),
+                Word("tt_e4", "Selfish shellfish should seldom sell selfish shellfish", "/ˈsɛlfɪʃ ˈʃɛlˌfɪʃ ʃʊd ˈsɛldəm sɛl/", "Switch smoothly between S and SH", "expert", "tongue_twister")
             )
         }
     }
@@ -406,14 +406,14 @@ class ChallengeViewModel(
                         _uiState.value = _uiState.value.copy(
                             uniqueWordsCount = res.totalUniqueCount,
                             score = eval.getScore(),
-                            statusMessage = "Đúng: ${res.word} (+10đ)",
+                            statusMessage = "Correct: ${res.word} (+10 pts)",
                             lastMatchReason = "accepted"
                         )
                         gameStateMachine.processAction(GameAction.WordMatched(spokenText, pointsAwarded = 10))
                     }
                     is CategoryRushEvaluator.SubmissionResult.Duplicate -> {
                         _uiState.value = _uiState.value.copy(
-                            statusMessage = "Từ '${res.word}' đã được nói rồi!",
+                            statusMessage = "Word '${res.word}' was already said!",
                             lastMatchReason = "duplicate"
                         )
                     }
@@ -643,11 +643,11 @@ class ChallengeViewModel(
 
     private fun getDefaultWords(): List<Word> {
         return listOf(
-            Word("w1", "White", "/waɪt/", "Âm W tròn môi, bật T", "basic", subject.key),
-            Word("w2", "Brown", "/braʊn/", "Nguyên âm AW, khép N", "basic", subject.key),
-            Word("w3", "Black", "/blæk/", "Âm A bẹt, bật K", "basic", subject.key),
-            Word("w4", "Green", "/ɡriːn/", "Kéo dài I, khép N", "basic", subject.key),
-            Word("w5", "Red", "/rɛd/", "Uốn lưỡi R, bật D", "basic", subject.key)
+            Word("w1", "White", "/waɪt/", "Round lips for W, crisp T", "basic", subject.key),
+            Word("w2", "Brown", "/braʊn/", "Open AW vowel, finish with N", "basic", subject.key),
+            Word("w3", "Black", "/blæk/", "Flat A sound, crisp K", "basic", subject.key),
+            Word("w4", "Green", "/ɡriːn/", "Long EE vowel, finish with N", "basic", subject.key),
+            Word("w5", "Red", "/rɛd/", "Curl tongue for R, crisp D", "basic", subject.key)
         )
     }
 }

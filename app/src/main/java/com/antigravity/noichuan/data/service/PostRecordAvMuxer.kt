@@ -52,7 +52,7 @@ class PostRecordAvMuxer {
                 finalVideoFile = videoOnlyFile,
                 isAudioMuxed = false,
                 syncPlan = null,
-                errorMessage = "File video gốc không tồn tại hoặc rỗng."
+                errorMessage = "Source video file is missing or empty."
             )
         }
 
@@ -62,7 +62,7 @@ class PostRecordAvMuxer {
                 finalVideoFile = videoOnlyFile,
                 isAudioMuxed = false,
                 syncPlan = null,
-                errorMessage = "Không có dữ liệu âm thanh thu được. Đã lưu video không tiếng."
+                errorMessage = "No audio captured. Video saved without audio."
             )
         }
 
@@ -116,7 +116,7 @@ class PostRecordAvMuxer {
                 extractor.release()
                 return MuxerOffsetCalculator.createFallbackResult(
                     videoOnlyFile,
-                    "Không tìm thấy track video hợp lệ trong file ghi hình"
+                    "No valid video track found in recording"
                 )
             }
 
@@ -162,7 +162,7 @@ class PostRecordAvMuxer {
             } else {
                 return MuxerOffsetCalculator.createFallbackResult(
                     videoOnlyFile,
-                    "File đầu ra sau khi ghép rỗng",
+                    "Output file is empty after muxing",
                     syncPlan
                 )
             }
@@ -171,7 +171,7 @@ class PostRecordAvMuxer {
             Log.e(TAG, "Lỗi trong quá trình Muxer video & audio", e)
             return MuxerOffsetCalculator.createFallbackResult(
                 videoOnlyFile,
-                e.message ?: "Ngoại lệ không xác định",
+                e.message ?: "Unknown exception",
                 syncPlan
             )
         } finally {

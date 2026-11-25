@@ -110,8 +110,8 @@ fun ModeSelectionBottomSheet(
                     mode = GameMode.EASY,
                     isSelected = selectedMode == GameMode.EASY,
                     badgeColor = Color(0xFF43A047),
-                    starsText = "⭐ Đạt từ 50đ",
-                    timeText = "15 giây / từ",
+                    starsText = "⭐ 50+ pts",
+                    timeText = "15s / word",
                     onClick = { selectedMode = GameMode.EASY }
                 )
 
@@ -119,8 +119,8 @@ fun ModeSelectionBottomSheet(
                     mode = GameMode.MEDIUM,
                     isSelected = selectedMode == GameMode.MEDIUM,
                     badgeColor = Color(0xFFFB8C00),
-                    starsText = "⭐⭐ Đạt từ 65đ",
-                    timeText = "10 giây / từ",
+                    starsText = "⭐⭐ 65+ pts",
+                    timeText = "10s / word",
                     onClick = { selectedMode = GameMode.MEDIUM }
                 )
 
@@ -128,8 +128,8 @@ fun ModeSelectionBottomSheet(
                     mode = GameMode.HARD,
                     isSelected = selectedMode == GameMode.HARD,
                     badgeColor = Color(0xFFE53935),
-                    starsText = "⭐⭐⭐ Đạt từ 80đ",
-                    timeText = "6 giây / từ",
+                    starsText = "⭐⭐⭐ 80+ pts",
+                    timeText = "6s / word",
                     onClick = { selectedMode = GameMode.HARD }
                 )
             }

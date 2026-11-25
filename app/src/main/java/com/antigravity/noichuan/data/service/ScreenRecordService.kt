@@ -84,8 +84,8 @@ class ScreenRecordService : Service() {
 
     private fun startForegroundWithNotification() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Nói Chuẩn — Thử Thách Phát Âm")
-            .setContentText("Đang ghi hình video kèm hiệu ứng AR...")
+            .setContentTitle("Speak Right — Pronunciation Challenge")
+            .setContentText("Recording video with AR effects...")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -211,10 +211,10 @@ class ScreenRecordService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Quay video màn hình",
+                "Screen Recording",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Thông báo khi đang quay video hiệu ứng AR"
+                description = "Notification while recording AR challenge video"
             }
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)

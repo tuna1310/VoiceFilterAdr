@@ -224,7 +224,7 @@ fun PremiumScreen(
                                 color = PrimaryBlue
                             )
                             Text(
-                                text = "15.365 đ/week",
+                                text = "$0.99/week",
                                 fontSize = 13.sp,
                                 color = TextSecondary
                             )
@@ -232,7 +232,7 @@ fun PremiumScreen(
                     }
 
                     Text(
-                        text = "799.000 đ",
+                        text = "$29.99",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryBlue
@@ -285,7 +285,7 @@ fun PremiumScreen(
                     }
 
                     Text(
-                        text = "129.000 đ",
+                        text = "$4.99",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryBlue
@@ -296,7 +296,7 @@ fun PremiumScreen(
             Spacer(modifier = Modifier.height(18.dp))
 
             Text(
-                text = "799.000 đ/year. Auto-renewable. Cancel anytime",
+                text = "$29.99/year. Auto-renewable. Cancel anytime",
                 fontSize = 13.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center

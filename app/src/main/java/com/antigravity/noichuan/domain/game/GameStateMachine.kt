@@ -166,7 +166,7 @@ class GameStateMachine(
             isGateTransitioning = true,
             wordElapsedMs = 0L, // reset đồng hồ cho thời gian chuyển tiếp gateTransitionDurationMs
             gateProgress = 1.3f,
-            bannerMessage = "🎉 Chính xác! +${pointsAwarded + bonus}"
+            bannerMessage = "🎉 Correct! +${pointsAwarded + bonus}"
         )
     }
 
@@ -192,7 +192,7 @@ class GameStateMachine(
             isGateTransitioning = true,
             wordElapsedMs = 0L,
             gateProgress = 1.3f,
-            bannerMessage = "💥 Va chạm! Mất 1 mạng"
+            bannerMessage = "💥 Crash! -1 Life"
         )
     }
 

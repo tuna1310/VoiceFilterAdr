@@ -13,7 +13,7 @@ class ScoreCalculatorImpl : ScoreCalculator {
             return ChallengeScore(
                 score = 0,
                 stars = 1,
-                feedback = "Từ mục tiêu không hợp lệ.",
+                feedback = "Invalid target word.",
                 bestMatchedCandidate = ""
             )
         }
@@ -23,7 +23,7 @@ class ScoreCalculatorImpl : ScoreCalculator {
             return ChallengeScore(
                 score = 0,
                 stars = 1,
-                feedback = "Chưa nghe rõ giọng của bạn, thử lại nào!",
+                feedback = "Couldn't hear your voice clearly, try again!",
                 bestMatchedCandidate = ""
             )
         }
@@ -87,11 +87,11 @@ class ScoreCalculatorImpl : ScoreCalculator {
 
     private fun mapScoreToStarsAndFeedback(score: Int): Pair<Int, String> {
         return when {
-            score >= 90 -> 5 to "Tuyệt vời! Phát âm chuẩn xác!"
-            score >= 75 -> 4 to "Rất tốt! Gần như hoàn hảo!"
-            score >= 60 -> 3 to "Gần đúng rồi! Chú ý âm đuôi nhé!"
-            score >= 40 -> 2 to "Cố lên, nghe lại mẫu và thử lại nhé!"
-            else -> 1 to "Chưa chuẩn lắm, hãy thử lại lần nữa!"
+            score >= 90 -> 5 to "Awesome! Spot-on pronunciation!"
+            score >= 75 -> 4 to "Great job! Almost perfect!"
+            score >= 60 -> 3 to "Close! Watch the ending sound!"
+            score >= 40 -> 2 to "Keep going, listen and try again!"
+            else -> 1 to "Not quite right, give it another try!"
         }
     }
 }

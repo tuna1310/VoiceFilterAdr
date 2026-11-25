@@ -82,14 +82,14 @@ fun SplashScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Nói Chuẩn",
+                    text = "Speak Right",
                     fontSize = 38.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White
                 )
 
                 Text(
-                    text = "Thử Thách Phát Âm",
+                    text = "Pronunciation Challenge",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White.copy(alpha = 0.9f)

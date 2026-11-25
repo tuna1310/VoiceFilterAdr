@@ -41,7 +41,7 @@ class VideoRecorderController {
     /** Bắt đầu quay. Trả về File sẽ lưu, hoặc null nếu chưa sẵn sàng. */
     fun startRecording(context: Context, onStart: () -> Unit, onError: (String) -> Unit): File? {
         val vc = videoCapture ?: run {
-            onError("Camera chưa sẵn sàng để quay")
+            onError("Camera is not ready to record")
             return null
         }
         val dir = File(context.filesDir, "videos").also { it.mkdirs() }
@@ -56,7 +56,7 @@ class VideoRecorderController {
                     is VideoRecordEvent.Start -> onStart()
                     is VideoRecordEvent.Finalize -> {
                         if (event.hasError()) {
-                            onError("Lỗi ghi video: ${event.cause?.message}")
+                            onError("Video recording error: ${event.cause?.message}")
                         }
                     }
                     else -> {}
@@ -160,7 +160,7 @@ fun CameraPreview(
                 }
             } catch (exc: Exception) {
                 Log.e("CameraPreview", "Lỗi khởi tạo camera", exc)
-                onError("Không thể kích hoạt camera: ${exc.message}")
+                onError("Could not start camera: ${exc.message}")
             }
         }, mainExecutor)
 

@@ -327,7 +327,7 @@ fun ChallengeScreen(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "Nói Chuẩn",
+                        text = "Speak Right",
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.ExtraBold
@@ -360,7 +360,7 @@ fun ChallengeScreen(
                     // Điểm số & Combo
                     if (uiState.score > 0) {
                         Text(
-                            text = "${uiState.score}đ",
+                            text = "${uiState.score} pts",
                             color = Color(0xFFFFD700),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Black
@@ -532,7 +532,7 @@ fun ChallengeScreen(
                                 }
                                 if (availableBytes < 100L * 1024L * 1024L) {
                                     scope.launch {
-                                        snackbarHostState.showSnackbar("Bộ nhớ thiết bị còn dưới 100MB, vui lòng dọn dẹp dung lượng để tiếp tục quay video.")
+                                        snackbarHostState.showSnackbar("Less than 100MB storage left. Please free up space to record video.")
                                     }
                                     return@clickable
                                 }
@@ -880,7 +880,7 @@ fun CategoryRushCard(
                     fontWeight = FontWeight.ExtraBold
                 )
                 Text(
-                    text = "Chủ đề: $subjectTitle",
+                    text = "Topic: $subjectTitle",
                     color = Color.White.copy(alpha = 0.85f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
@@ -921,7 +921,7 @@ fun CategoryRushCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$uniqueWordsCount từ đúng",
+                        text = "$uniqueWordsCount words",
                         color = Color(0xFF00FF66),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold

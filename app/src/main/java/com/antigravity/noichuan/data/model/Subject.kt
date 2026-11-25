@@ -16,7 +16,7 @@ enum class Subject(
     COLORS(
         key = "colors",
         title = "Colors",
-        titleVi = "Màu sắc",
+        titleVi = "Colors",
         emoji = "🎨",
         learnersCount = 19740,
         cardColor = Color(0xFF2F80ED),
@@ -25,7 +25,7 @@ enum class Subject(
     CAR_BRANDS(
         key = "car_brands",
         title = "Car Brands",
-        titleVi = "Hãng xe",
+        titleVi = "Car Brands",
         emoji = "🚗",
         learnersCount = 15516,
         cardColor = Color(0xFFFF7043),
@@ -34,7 +34,7 @@ enum class Subject(
     WEEKDAYS(
         key = "weekdays",
         title = "Weekdays",
-        titleVi = "Ngày trong tuần",
+        titleVi = "Weekdays",
         emoji = "📅",
         learnersCount = 24110,
         cardColor = Color(0xFF29B6F6),
@@ -43,7 +43,7 @@ enum class Subject(
     MONTHS(
         key = "months",
         title = "Months",
-        titleVi = "Tháng trong năm",
+        titleVi = "Months",
         emoji = "🗓️",
         learnersCount = 18230,
         cardColor = Color(0xFFAB47BC),
@@ -52,7 +52,7 @@ enum class Subject(
     ANIMALS(
         key = "animals",
         title = "Animals",
-        titleVi = "Động vật",
+        titleVi = "Animals",
         emoji = "🦁",
         learnersCount = 33224,
         cardColor = Color(0xFF4CAF50),
@@ -61,7 +61,7 @@ enum class Subject(
     VEHICLES(
         key = "vehicles",
         title = "Vehicles",
-        titleVi = "Phương tiện",
+        titleVi = "Vehicles",
         emoji = "🚀",
         learnersCount = 21890,
         cardColor = Color(0xFF7E57C2),
@@ -70,7 +70,7 @@ enum class Subject(
     KITCHEN(
         key = "kitchen",
         title = "Kitchen Utensils",
-        titleVi = "Dụng cụ bếp",
+        titleVi = "Kitchen",
         emoji = "🍳",
         learnersCount = 12450,
         cardColor = Color(0xFFFFA726),
@@ -79,7 +79,7 @@ enum class Subject(
     COUNTRIES(
         key = "countries",
         title = "Countries",
-        titleVi = "Quốc gia",
+        titleVi = "Countries",
         emoji = "🌍",
         learnersCount = 32261,
         cardColor = Color(0xFF26A69A),
@@ -88,7 +88,7 @@ enum class Subject(
     DAILY_WORDS(
         key = "daily_words",
         title = "Daily Words",
-        titleVi = "Từ vựng hàng ngày",
+        titleVi = "Daily Words",
         emoji = "☕",
         learnersCount = 41200,
         cardColor = Color(0xFF00ACC1),
@@ -97,7 +97,7 @@ enum class Subject(
     TRAVEL_FOOD(
         key = "travel_food",
         title = "Travel & Food",
-        titleVi = "Du lịch & Ẩm thực",
+        titleVi = "Travel & Food",
         emoji = "✈️",
         learnersCount = 38900,
         cardColor = Color(0xFFFF7043),
@@ -106,7 +106,7 @@ enum class Subject(
     ENTERTAINMENT_SPORTS(
         key = "entertainment_sports",
         title = "Movies & Sports",
-        titleVi = "Phim ảnh & Thể thao",
+        titleVi = "Movies & Sports",
         emoji = "🎬",
         learnersCount = 29500,
         cardColor = Color(0xFF8E24AA),
@@ -115,7 +115,7 @@ enum class Subject(
     SLANG_BRAINROT(
         key = "slang_brainrot",
         title = "Slang & Pop Culture",
-        titleVi = "Từ lóng & Giới trẻ",
+        titleVi = "Slang & Trends",
         emoji = "🔥",
         learnersCount = 52300,
         cardColor = Color(0xFFFF1744),

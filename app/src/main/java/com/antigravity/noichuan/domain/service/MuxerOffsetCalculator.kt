@@ -87,7 +87,7 @@ object MuxerOffsetCalculator {
             finalVideoFile = originalVideoFile,
             isAudioMuxed = false,
             syncPlan = syncPlan,
-            errorMessage = "Lỗi ghép âm thanh: $reason. Video của bạn đã được bảo lưu an toàn ở chế độ không tiếng."
+            errorMessage = "Audio mux error: $reason. Your video was safely saved without audio."
         )
     }
 }

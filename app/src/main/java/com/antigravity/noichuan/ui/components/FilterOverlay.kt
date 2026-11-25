@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 enum class FilterStyle(val title: String, val topEmoji: String, val leftEmoji: String, val rightEmoji: String) {
-    BUNNY("Thỏ Vui Nhộn", "🐰", "✨", "🌸"),
-    STAR("Ngôi Sao", "🕶️", "⭐", "🔥"),
-    CROWN("Vương Miện", "👑", "💎", "✨")
+    BUNNY("Funny Bunny", "🐰", "✨", "🌸"),
+    STAR("Star", "🕶️", "⭐", "🔥"),
+    CROWN("Crown", "👑", "💎", "✨")
 }
 
 @Composable

@@ -128,7 +128,7 @@ fun PermissionScreen(
                     icon = Icons.Rounded.Mic,
                     title = stringResource(R.string.permission_mic_title),
                     description = stringResource(R.string.permission_mic_desc),
-                    badgeText = "Bắt buộc",
+                    badgeText = "Required",
                     badgeColor = Color(0xFFE53935)
                 )
 
@@ -136,7 +136,7 @@ fun PermissionScreen(
                     icon = Icons.Rounded.CameraAlt,
                     title = stringResource(R.string.permission_camera_title),
                     description = stringResource(R.string.permission_camera_desc),
-                    badgeText = "Tùy chọn",
+                    badgeText = "Optional",
                     badgeColor = Color(0xFF43A047)
                 )
             }
@@ -225,7 +225,7 @@ fun PermissionScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Tiếp tục không dùng Camera",
+                        text = "Continue without Camera",
                         color = Color.White.copy(alpha = 0.9f),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
@@ -239,11 +239,11 @@ fun PermissionScreen(
         AlertDialog(
             onDismissRequest = { showSettingsDialog = false },
             title = {
-                Text(text = "Cần quyền Microphone", fontWeight = FontWeight.Bold)
+                Text(text = "Microphone Permission Required", fontWeight = FontWeight.Bold)
             },
             text = {
                 Text(
-                    text = "Để nhận diện giọng nói và chấm điểm phát âm, ứng dụng bắt buộc cần quyền Microphone. Vui lòng mở Cài đặt và bật quyền Microphone."
+                    text = "Microphone access is required for speech recognition and scoring. Please open Settings and enable Microphone permission."
                 )
             },
             confirmButton = {
@@ -259,12 +259,12 @@ fun PermissionScreen(
                 ) {
                     Icon(imageVector = Icons.Rounded.Settings, contentDescription = null)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Mở Cài đặt")
+                    Text(text = "Open Settings")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSettingsDialog = false }) {
-                    Text(text = "Để sau")
+                    Text(text = "Later")
                 }
             }
         )

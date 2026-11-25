@@ -8,9 +8,9 @@ enum class DifficultyLevel(
     val labelVi: String,
     val color: Color
 ) {
-    BEGINNER("basic", "Beginner", "Cơ bản", Color(0xFF29B6F6)),
-    INTERMEDIATE("medium", "Intermediate", "Trung cấp", Color(0xFFFFA726)),
-    EXPERT("advanced", "Expert", "Nâng cao", Color(0xFFEF5350));
+    BEGINNER("basic", "Beginner", "Beginner", Color(0xFF29B6F6)),
+    INTERMEDIATE("medium", "Intermediate", "Intermediate", Color(0xFFFFA726)),
+    EXPERT("advanced", "Expert", "Expert", Color(0xFFEF5350));
 
     companion object {
         fun fromKey(key: String): DifficultyLevel {

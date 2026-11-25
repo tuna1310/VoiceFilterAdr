@@ -173,7 +173,7 @@ fun ResultScreen(
                     }
 
                     Text(
-                        text = "Thử Thách Hoàn Thành!",
+                        text = "Challenge Complete!",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -226,7 +226,7 @@ fun ResultScreen(
                             modifier = Modifier.padding(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Điểm số", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+                            Text("Score", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
                             Text("$score", fontSize = 18.sp, color = PrimaryBlue, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -242,7 +242,7 @@ fun ResultScreen(
                             modifier = Modifier.padding(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Từ đúng", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+                            Text("Words", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
                             Text("$wordsCompleted", fontSize = 18.sp, color = Color(0xFF10B981), fontWeight = FontWeight.Bold)
                         }
                     }
@@ -324,14 +324,14 @@ fun ResultScreen(
                                 }
                                 Spacer(modifier = Modifier.height(14.dp))
                                 Text(
-                                    text = "Video Thử Thách (${durationSec}s)",
+                                    text = "Challenge Video (${durationSec}s)",
                                     color = Color.White,
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Đã luyện $wordsCompleted từ vựng",
+                                    text = "Practiced $wordsCompleted words",
                                     color = Color.White.copy(alpha = 0.7f),
                                     fontSize = 13.sp
                                 )
@@ -373,7 +373,7 @@ fun ResultScreen(
                                 modifier = Modifier.size(14.dp)
                             )
                             Text(
-                                text = "Nói Chuẩn",
+                                text = "Speak Right",
                                 color = Color.White,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
@@ -399,13 +399,13 @@ fun ResultScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Refresh,
-                            contentDescription = "Chơi lại",
+                            contentDescription = "Play Again",
                             tint = PrimaryBlue,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Chơi lại",
+                            text = "Play Again",
                             color = PrimaryBlue,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
@@ -442,7 +442,7 @@ fun ResultScreen(
                                 }
 
                                 isSaved = true
-                                snackbarHostState.showSnackbar("Đã lưu video vào thư viện máy & My Videos!")
+                                snackbarHostState.showSnackbar("Video saved to Gallery & My Videos!")
                             }
                         },
                         modifier = Modifier
@@ -455,13 +455,13 @@ fun ResultScreen(
                     ) {
                         Icon(
                             imageVector = if (isSaved) Icons.Rounded.BookmarkAdded else Icons.Rounded.Download,
-                            contentDescription = "Lưu video",
+                            contentDescription = "Save Video",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isSaved) "Đã lưu" else "Lưu video",
+                            text = if (isSaved) "Saved" else "Save Video",
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
@@ -492,13 +492,13 @@ fun ResultScreen(
                                         }
                                         putExtra(
                                             Intent.EXTRA_TEXT,
-                                            "Tôi vừa hoàn thành thử thách phát âm ${subject.titleVi} với Nói Chuẩn: Thử Thách Phát Âm!"
+                                            "I just completed the ${subject.titleEn} pronunciation challenge on Voice Filter: Speak Challenge!"
                                         )
                                     }
-                                    context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ video Nói Chuẩn"))
+                                    context.startActivity(Intent.createChooser(shareIntent, "Share Challenge Video"))
                                 } catch (e: Exception) {
                                     scope.launch {
-                                        snackbarHostState.showSnackbar("Không thể chia sẻ: ${e.message}")
+                                        snackbarHostState.showSnackbar("Could not share: ${e.message}")
                                     }
                                 }
                             },
@@ -506,7 +506,7 @@ fun ResultScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Share,
-                            contentDescription = "Chia sẻ",
+                            contentDescription = "Share",
                             tint = PrimaryBlue,
                             modifier = Modifier.size(24.dp)
                         )

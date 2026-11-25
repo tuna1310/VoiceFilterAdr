@@ -53,7 +53,7 @@ class GoogleSpeechRecognizerEngine(
         mainHandler.post {
             try {
                 if (!SpeechRecognizer.isRecognitionAvailable(context)) {
-                    val msg = "Google SpeechRecognizer không khả dụng trên thiết bị này."
+                    val msg = "Google SpeechRecognizer is not available on this device."
                     emitEvent(SpeechEngineEvent.Error(msg, isRecoverable = false))
                     onError(msg)
                     return@post
@@ -71,7 +71,7 @@ class GoogleSpeechRecognizerEngine(
                 emitEvent(SpeechEngineEvent.Ready)
                 onReady()
             } catch (e: Exception) {
-                val msg = "Không thể khởi tạo Google SpeechRecognizer: ${e.message}"
+                val msg = "Failed to initialize Google SpeechRecognizer: ${e.message}"
                 emitEvent(SpeechEngineEvent.Error(msg, isRecoverable = false))
                 onError(msg)
             }
@@ -101,7 +101,7 @@ class GoogleSpeechRecognizerEngine(
                 emitEvent(SpeechEngineEvent.Listening)
                 speechRecognizer?.startListening(intent)
             } catch (e: Exception) {
-                emitEvent(SpeechEngineEvent.Error("Lỗi startListening: ${e.message}"))
+                emitEvent(SpeechEngineEvent.Error("startListening error: ${e.message}"))
             }
         }
     }
@@ -147,12 +147,12 @@ class GoogleSpeechRecognizerEngine(
 
             override fun onError(error: Int) {
                 val (msg, recoverable) = when (error) {
-                    SpeechRecognizer.ERROR_AUDIO -> "Lỗi thu âm từ microphone (Xung đột với trình ghi màn hình)." to true
-                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Không nghe thấy giọng nói (Hết thời gian chờ)." to true
-                    SpeechRecognizer.ERROR_NO_MATCH -> "Chưa nhận dạng được từ." to true
-                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Dịch vụ đang bận, thử lại." to true
-                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Chưa cấp quyền microphone." to false
-                    else -> "Lỗi nhận diện mã $error." to true
+                    SpeechRecognizer.ERROR_AUDIO -> "Microphone recording error (conflict with screen recorder)." to true
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech detected (timeout)." to true
+                    SpeechRecognizer.ERROR_NO_MATCH -> "Could not recognize word." to true
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Service busy, retrying." to true
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission not granted." to false
+                    else -> "Recognition error code $error." to true
                 }
                 if (error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
                     emitEvent(SpeechEngineEvent.NoSpeechTimeout(msg))

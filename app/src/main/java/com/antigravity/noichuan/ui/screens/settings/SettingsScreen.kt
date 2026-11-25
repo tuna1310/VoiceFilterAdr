@@ -126,7 +126,7 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = "Cài Đặt",
+                    text = "Settings",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -136,7 +136,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 1. Âm thanh & SFX
-            SettingsSectionHeader(title = "Âm Thanh & Nhạc Nền")
+            SettingsSectionHeader(title = "Sound & Music")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -160,8 +160,8 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Hiệu ứng âm thanh (SFX)", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                                Text("Âm thanh ding, buzz, crash khi chơi", fontSize = 12.sp, color = TextSecondary)
+                                Text("Sound Effects (SFX)", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                                Text("Ding, buzz, and crash sounds during play", fontSize = 12.sp, color = TextSecondary)
                             }
                         }
                         Switch(
@@ -188,8 +188,8 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Nhạc nền trận đấu (BGM)", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                                Text("Vòng lặp âm thanh nhẹ nhàng trong thử thách", fontSize = 12.sp, color = TextSecondary)
+                                Text("Background Music (BGM)", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                                Text("Light background loop during challenges", fontSize = 12.sp, color = TextSecondary)
                             }
                         }
                         Switch(
@@ -204,7 +204,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 2. Engine Nhận Diện Giọng Nói
-            SettingsSectionHeader(title = "Engine Nhận Diện Giọng Nói")
+            SettingsSectionHeader(title = "Speech Recognition Engine")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -215,9 +215,9 @@ fun SettingsScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     // Option A: Vosk
                     EngineOptionCard(
-                        title = "Vosk Speech Engine (Khuyên Dùng)",
+                        title = "Vosk Speech Engine (Recommended)",
                         badge = "On-Device Offline",
-                        description = "Xử lý nhận diện 100% trên thiết bị bằng Kaldi AI. Hoạt động khi không có mạng, độ trễ cực thấp, bảo mật tuyệt đối không gửi giọng nói lên server.",
+                        description = "100% on-device recognition powered by Kaldi AI. Works offline with ultra-low latency and full privacy.",
                         isSelected = speechEngineType == "VOSK",
                         onClick = { viewModel.setSpeechEngine("VOSK") }
                     )
@@ -228,7 +228,7 @@ fun SettingsScreen(
                     EngineOptionCard(
                         title = "Google SpeechRecognizer",
                         badge = "Android System Online",
-                        description = "Sử dụng engine hệ thống của Android. Hỗ trợ nhận diện câu dài, yêu cầu kết nối Internet hoặc gói nhận diện giọng nói Google đã tải trước.",
+                        description = "Uses Android system speech engine. Supports long phrases; requires Internet or downloaded Google voice pack.",
                         isSelected = speechEngineType == "GOOGLE",
                         onClick = { viewModel.setSpeechEngine("GOOGLE") }
                     )
@@ -238,7 +238,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 3. Quản Lý Quyền (Permissions)
-            SettingsSectionHeader(title = "Quản Lý Quyền Thiết Bị")
+            SettingsSectionHeader(title = "Device Permissions")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -251,7 +251,7 @@ fun SettingsScreen(
                     PermissionStatusRow(
                         icon = Icons.Rounded.Mic,
                         title = "Microphone",
-                        subtitle = "Bắt buộc để thu âm và chấm điểm phát âm",
+                        subtitle = "Required to record audio and score pronunciation",
                         isGranted = hasMicPerm
                     )
 
@@ -260,8 +260,8 @@ fun SettingsScreen(
                     // Camera Status
                     PermissionStatusRow(
                         icon = Icons.Rounded.Videocam,
-                        title = "Camera Trước",
-                        subtitle = "Tùy chọn tạo hiệu ứng video AR selfie",
+                        title = "Front Camera",
+                        subtitle = "Optional for AR selfie video effects",
                         isGranted = hasCameraPerm
                     )
 
@@ -283,7 +283,7 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Thay đổi quyền trong Cài đặt hệ thống", fontSize = 13.sp, color = PrimaryBlue, fontWeight = FontWeight.SemiBold)
+                        Text("Manage permissions in System Settings", fontSize = 13.sp, color = PrimaryBlue, fontWeight = FontWeight.SemiBold)
                         Icon(imageVector = Icons.Rounded.OpenInNew, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(16.dp))
                     }
                 }
@@ -292,7 +292,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 4. Google Play Data Safety
-            SettingsSectionHeader(title = "An Toàn & Bảo Mật Dữ Liệu")
+            SettingsSectionHeader(title = "Privacy & Data Safety")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -305,10 +305,10 @@ fun SettingsScreen(
                     Icon(imageVector = Icons.Rounded.Security, contentDescription = null, tint = Color(0xFF16A34A), modifier = Modifier.size(24.dp))
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Bảo Vệ Quyền Riêng Tư Của Bạn", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF15803D))
+                        Text("Your Privacy Is Protected", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF15803D))
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Toàn bộ âm thanh thu âm từ microphone được xử lý cục bộ trên thiết bị và không được chia sẻ với bất kỳ bên thứ ba nào. Video ghi hình chỉ được lưu khi bạn bấm nút Lưu vào thư viện máy.",
+                            text = "All microphone audio is processed locally on-device and never shared with third parties. Videos are only saved when you tap Save.",
                             fontSize = 12.sp,
                             color = Color(0xFF166534),
                             lineHeight = 17.sp
@@ -320,7 +320,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 5. Version & Credits
-            SettingsSectionHeader(title = "Thông Tin Ứng Dụng")
+            SettingsSectionHeader(title = "App Information")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -334,7 +334,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Phiên bản", fontSize = 14.sp, color = TextSecondary)
+                        Text("Version", fontSize = 14.sp, color = TextSecondary)
                         Text("1.0.0 (Release A7)", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                     }
 
@@ -348,7 +348,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Giấy phép & Credits nguồn mở", fontSize = 14.sp, color = PrimaryBlue, fontWeight = FontWeight.SemiBold)
+                        Text("Open Source Licenses & Credits", fontSize = 14.sp, color = PrimaryBlue, fontWeight = FontWeight.SemiBold)
                         Icon(imageVector = Icons.Rounded.Info, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(18.dp))
                     }
                 }
@@ -361,7 +361,7 @@ fun SettingsScreen(
         if (showCreditsDialog) {
             AlertDialog(
                 onDismissRequest = { showCreditsDialog = false },
-                title = { Text("Credits & Giấy Phép Mã Nguồn", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
+                title = { Text("Credits & Open Source Licenses", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
                 text = {
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -371,12 +371,12 @@ fun SettingsScreen(
                         Text("• Apache Commons Codec (Apache License 2.0)", fontSize = 13.sp)
                         Text("• Jetpack Compose & AndroidX (Apache License 2.0)", fontSize = 13.sp)
                         Text("• Kotlinx Coroutines & Serialization (Apache License 2.0)", fontSize = 13.sp)
-                        Text("• SFX Assets (ding, buzz, crash, bgm): Tổng hợp bằng mã nguồn toán học dưới giấy phép CC0 / Apache 2.0.", fontSize = 13.sp)
+                        Text("• SFX Assets (ding, buzz, crash, bgm): Procedurally synthesized under CC0 / Apache 2.0.", fontSize = 13.sp)
                     }
                 },
                 confirmButton = {
                     TextButton(onClick = { showCreditsDialog = false }) {
-                        Text("Đóng", fontWeight = FontWeight.Bold, color = PrimaryBlue)
+                        Text("Close", fontWeight = FontWeight.Bold, color = PrimaryBlue)
                     }
                 }
             )
@@ -477,7 +477,7 @@ private fun PermissionStatusRow(
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
-                text = if (isGranted) "Đã cấp" else "Chưa cấp",
+                text = if (isGranted) "Granted" else "Not Granted",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = if (isGranted) Color(0xFF16A34A) else Color(0xFFDC2626)

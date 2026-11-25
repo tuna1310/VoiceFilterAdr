@@ -30,7 +30,7 @@ class AndroidSpeechRecognizerService(
 
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
             _state.value = SpeechRecognitionState.Error(
-                "Dịch vụ nhận diện giọng nói không khả dụng trên thiết bị này.",
+                "Speech recognition service is not available on this device.",
                 isRecoverable = false
             )
             return false
@@ -69,7 +69,7 @@ class AndroidSpeechRecognizerService(
                 speechRecognizer?.startListening(intent)
                 onReady()
             } catch (e: Exception) {
-                _state.value = SpeechRecognitionState.Error("Không thể kích hoạt ghi âm: ${e.message}")
+                _state.value = SpeechRecognitionState.Error("Could not start recording: ${e.message}")
             }
         }
     }
@@ -119,16 +119,16 @@ class AndroidSpeechRecognizerService(
 
             override fun onError(error: Int) {
                 val errorMsg = when (error) {
-                    SpeechRecognizer.ERROR_AUDIO -> "Lỗi thu âm từ microphone."
-                    SpeechRecognizer.ERROR_CLIENT -> "Lỗi kết nối từ ứng dụng."
-                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Chưa cấp quyền microphone."
+                    SpeechRecognizer.ERROR_AUDIO -> "Microphone audio error."
+                    SpeechRecognizer.ERROR_CLIENT -> "Client connection error."
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission not granted."
                     SpeechRecognizer.ERROR_NETWORK,
-                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Lỗi mạng khi nhận diện."
-                    SpeechRecognizer.ERROR_NO_MATCH -> "Chưa nghe rõ từ bạn phát âm. Hãy thử lại!"
-                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Dịch vụ đang bận, vui lòng thử lại."
-                    SpeechRecognizer.ERROR_SERVER -> "Lỗi máy chủ nhận diện."
-                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Hết thời gian chờ giọng nói."
-                    else -> "Lỗi nhận diện giọng nói (mã: $error)."
+                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network error during recognition."
+                    SpeechRecognizer.ERROR_NO_MATCH -> "Could not hear your word clearly. Please try again!"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Service is busy, please try again."
+                    SpeechRecognizer.ERROR_SERVER -> "Recognition server error."
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Speech timeout."
+                    else -> "Speech recognition error (code: $error)."
                 }
                 _state.value = SpeechRecognitionState.Error(errorMsg, isRecoverable = true)
             }
@@ -138,7 +138,7 @@ class AndroidSpeechRecognizerService(
                 if (!matches.isNullOrEmpty()) {
                     _state.value = SpeechRecognitionState.Success(matches)
                 } else {
-                    _state.value = SpeechRecognitionState.Error("Không có kết quả nhận diện.", isRecoverable = true)
+                    _state.value = SpeechRecognitionState.Error("No recognition result.", isRecoverable = true)
                 }
             }
 

@@ -136,7 +136,7 @@ class TongueTwisterEvaluator {
         val spokenTokens = tokenizeSentence(spokenText)
 
         if (targetTokens.isEmpty()) {
-            return EvaluationResult(0f, 0f, 0, 1, emptySet(), "Câu mẫu rỗng")
+            return EvaluationResult(0f, 0f, 0, 1, emptySet(), "Reference sentence is empty")
         }
 
         val matchedIndices = calculateMatchedIndices(targetTokens, spokenTokens)
@@ -163,9 +163,9 @@ class TongueTwisterEvaluator {
         }
 
         val feedback = when (stars) {
-            3 -> "Xuất sắc! Đọc trôi chảy và rất chuẩn xác!"
-            2 -> "Tốt! Chú ý giữ nhịp đọc liền mạch hơn nhé."
-            else -> "Cần cố gắng thêm! Đọc chậm lại để rõ từng âm."
+            3 -> "Excellent! Fluent and very accurate!"
+            2 -> "Good! Try to keep a smoother pace."
+            else -> "Keep practicing! Slow down for clearer sounds."
         }
 
         return EvaluationResult(

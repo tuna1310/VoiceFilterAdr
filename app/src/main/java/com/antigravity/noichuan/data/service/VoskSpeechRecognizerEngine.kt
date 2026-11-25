@@ -116,7 +116,7 @@ class VoskSpeechRecognizerEngine(
                 }
 
                 if (!effectiveModelDir.exists() || !effectiveModelDir.isDirectory) {
-                    val msg = "Mô hình ngôn ngữ Vosk chưa sẵn sàng tại: ${effectiveModelDir.absolutePath}."
+                    val msg = "Vosk language model is not ready at: ${effectiveModelDir.absolutePath}."
                     Log.w(TAG, msg)
                     _unpackState.value = ModelUnpackState.Error(msg)
                     emitEvent(SpeechEngineEvent.Error(msg, isRecoverable = true))
@@ -134,7 +134,7 @@ class VoskSpeechRecognizerEngine(
                 emitEvent(SpeechEngineEvent.Ready)
                 onReady()
             } catch (e: Throwable) {
-                val msg = "Lỗi khởi tạo Vosk: ${e.message}"
+                val msg = "Failed to initialize Vosk: ${e.message}"
                 Log.e(TAG, msg, e)
                 _unpackState.value = ModelUnpackState.Error(msg)
                 emitEvent(SpeechEngineEvent.Error(msg, isRecoverable = true))

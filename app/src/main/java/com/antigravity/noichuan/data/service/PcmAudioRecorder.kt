@@ -56,7 +56,7 @@ class PcmAudioRecorder(
             )
 
             if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
-                onError("Không thể khởi tạo AudioRecord (Microphone có thể đang bị ứng dụng khác chiếm giữ).")
+                onError("Could not initialize AudioRecord (microphone may be in use by another app).")
                 return
             }
 
@@ -77,7 +77,7 @@ class PcmAudioRecorder(
 
         } catch (e: Exception) {
             isRecording.set(false)
-            val msg = "Lỗi khởi động PcmAudioRecorder: ${e.message}"
+            val msg = "Failed to start PcmAudioRecorder: ${e.message}"
             Log.e(TAG, msg, e)
             onError(msg)
         }

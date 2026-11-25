@@ -8,7 +8,7 @@ import kotlin.math.sqrt
  * Tính năng:
  * 1. Phân tích năng lượng âm thanh RMS từ buffer PCM.
  * 2. Theo dõi thời gian im lặng liên tục (không có tiếng hoặc không nhận diện được từ).
- * 3. Khi vượt ngưỡng timeout: DỪNG lại, kích hoạt callback onTimeout("Không nghe thấy giọng nói").
+ * 3. Khi vượt ngưỡng timeout: DỪNG lại, kích hoạt callback onTimeout("No speech detected").
  * 4. TUYỆT ĐỐI KHÔNG tự động restart vô hạn; chỉ khởi động lại khi có lệnh start() tường minh.
  */
 class SilenceWatchdog(
@@ -60,7 +60,7 @@ class SilenceWatchdog(
             if (silenceDuration >= silenceTimeoutMs) {
                 hasTimedOut = true
                 isRunning = false
-                onTimeout("Không nghe thấy giọng nói")
+                onTimeout("No speech detected")
             }
         }
         return rms
@@ -75,7 +75,7 @@ class SilenceWatchdog(
         if (currentTimeMs - lastSpeechTimestampMs >= silenceTimeoutMs) {
             hasTimedOut = true
             isRunning = false
-            onTimeout("Không nghe thấy giọng nói")
+            onTimeout("No speech detected")
             return true
         }
         return false
