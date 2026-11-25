@@ -492,7 +492,7 @@ fun ResultScreen(
                                         }
                                         putExtra(
                                             Intent.EXTRA_TEXT,
-                                            "I just completed the ${subject.titleEn} pronunciation challenge on Voice Filter: Speak Challenge!"
+                                            "I just completed the ${subject.titleVi} pronunciation challenge on Voice Filter: Speak Challenge!"
                                         )
                                     }
                                     context.startActivity(Intent.createChooser(shareIntent, "Share Challenge Video"))
