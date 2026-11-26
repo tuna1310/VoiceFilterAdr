@@ -39,6 +39,7 @@ import java.util.Locale
 class ScreenRecordService : Service() {
 
     private var mediaProjection: MediaProjection? = null
+    private var projectionCallback: MediaProjection.Callback? = null
     private var virtualDisplay: VirtualDisplay? = null
     private var mediaRecorder: MediaRecorder? = null
     private var outputFile: File? = null
@@ -115,7 +116,20 @@ class ScreenRecordService : Service() {
 
         try {
             val projectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-            mediaProjection = projectionManager.getMediaProjection(resultCode, resultData)
+            val projection = projectionManager.getMediaProjection(resultCode, resultData)
+            mediaProjection = projection
+
+            // Android 14+ (API 34+) requires registering a MediaProjection.Callback before createVirtualDisplay
+            val callback = object : MediaProjection.Callback() {
+                override fun onStop() {
+                    Log.w(TAG, "MediaProjection stopped by system")
+                    stopRecording()
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
+                }
+            }
+            projectionCallback = callback
+            projection?.registerCallback(callback, android.os.Handler(android.os.Looper.getMainLooper()))
 
             // Setup MediaRecorder
             mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -186,6 +200,16 @@ class ScreenRecordService : Service() {
             Log.e(TAG, "Error releasing virtual display", e)
         } finally {
             virtualDisplay = null
+        }
+
+        try {
+            projectionCallback?.let { cb ->
+                mediaProjection?.unregisterCallback(cb)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Error unregistering projection callback", e)
+        } finally {
+            projectionCallback = null
         }
 
         try {
@@ -280,6 +304,88 @@ object ScreenRecordManager {
         val dir = File(context.filesDir, "videos").also { it.mkdirs() }
         val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         return File(dir, "noichuan_ar_$name.mp4")
+    }
+
+    /**
+     * Starts only PcmAudioRecorder for CameraX video-only fallback rounds when MediaProjection
+     * is declined or unavailable, ensuring Vosk still receives microphone PCM audio and
+     * recorded audio can be muxed afterward.
+     */
+    fun startPcmAudioOnly(context: Context): File {
+        appContext = context.applicationContext
+        usePcmAudio = true
+        val dir = File(context.filesDir, "videos").also { it.mkdirs() }
+        val rawAudio = File(dir, "temp_fallback_audio_${System.currentTimeMillis()}.pcm")
+        pcmAudioFile = rawAudio
+        pcmAudioRecorder.startRecording(
+            outputFile = rawAudio,
+            onStarted = {
+                audioStartNanos = pcmAudioRecorder.audioStartNanos
+                Log.d(TAG, "Fallback PcmAudioRecorder started at nano: $audioStartNanos")
+            },
+            onError = { err ->
+                Log.w(TAG, "Fallback PcmAudioRecorder warning: $err")
+            }
+        )
+        return rawAudio
+    }
+
+    /**
+     * Stops PcmAudioRecorder and muxes the fallback CameraX video-only clip with captured
+     * mic audio + timeline SFX into a complete MP4. Falls back cleanly to rawVideo on error.
+     */
+    fun finishCameraFallbackWithMuxing(
+        context: Context,
+        rawVideo: File?,
+        videoStartNs: Long,
+        timeline: com.antigravity.noichuan.domain.game.GameEventTimeline? = null,
+        onComplete: (File?) -> Unit
+    ) {
+        appContext = context.applicationContext
+        try {
+            pcmAudioRecorder.stopRecording()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping fallback pcmAudioRecorder: ${e.message}")
+        }
+
+        val pcm = pcmAudioFile
+        if (rawVideo == null || !rawVideo.exists() || rawVideo.length() <= 0) {
+            onComplete(rawVideo)
+            return
+        }
+        if (pcm == null || !pcm.exists() || pcm.length() <= 0) {
+            onComplete(rawVideo)
+            return
+        }
+
+        val target = generateVideoFile(context)
+        CoroutineScope(Dispatchers.IO).launch {
+            val finalFile = try {
+                val muxResult = avMuxer.mux(
+                    videoOnlyFile = rawVideo,
+                    pcmAudioFile = pcm,
+                    videoStartNanos = videoStartNs,
+                    audioStartNanos = audioStartNanos,
+                    outputMuxedFile = target,
+                    timeline = timeline,
+                    context = context.applicationContext
+                )
+                if (muxResult.isAudioMuxed && target.exists() && target.length() > 0) {
+                    pcm.delete()
+                    rawVideo.delete()
+                    target
+                } else {
+                    rawVideo
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "Fallback A/V mux failed, keeping raw camera clip", e)
+                rawVideo
+            }
+            withContext(Dispatchers.Main) {
+                currentOutputFile = finalFile
+                onComplete(finalFile)
+            }
+        }
     }
 
     fun start(

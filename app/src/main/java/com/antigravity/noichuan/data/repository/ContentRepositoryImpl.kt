@@ -51,6 +51,10 @@ class ContentRepositoryImpl(
         scope = scope
     )
 
+    companion object {
+        const val BUNDLED_CONTENT_VERSION = 2
+    }
+
     private val initMutex = Mutex()
     private var isInitialized = false
 
@@ -66,7 +70,8 @@ class ContentRepositoryImpl(
         initMutex.withLock {
             if (isInitialized) return@withLock
             val count = wordDao.getWordCount()
-            if (count == 0 && context != null) {
+            val localVersion = contentVersionDao.getVersion("content")?.version ?: 0
+            if ((count == 0 || localVersion < BUNDLED_CONTENT_VERSION) && context != null) {
                 seedFromAssets()
             }
             isInitialized = true
@@ -83,7 +88,9 @@ class ContentRepositoryImpl(
 
             wordDao.insertWords(regularWords.map { WordEntity.fromDomainModel(it) })
             tongueTwisterDao.insertAll(tongueTwisters.map { TongueTwisterEntity.fromDomainModel(it) })
-            contentVersionDao.setVersion(ContentVersionEntity(key = "content", version = 1))
+            val currentVer = contentVersionDao.getVersion("content")?.version ?: 0
+            val targetVer = maxOf(currentVer, BUNDLED_CONTENT_VERSION)
+            contentVersionDao.setVersion(ContentVersionEntity(key = "content", version = targetVer))
         } catch (e: Exception) {
             e.printStackTrace()
         }

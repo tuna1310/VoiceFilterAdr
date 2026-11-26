@@ -58,7 +58,7 @@ import org.koin.compose.koinInject
 fun SubjectDetailScreen(
     subjectKey: String,
     onBack: () -> Unit,
-    onNavigateToRecording: (subjectKey: String, levelKey: String) -> Unit,
+    onNavigateToRecording: (subjectKey: String, levelKey: String, gameMode: String) -> Unit,
     modifier: Modifier = Modifier,
     bookmarkRepository: BookmarkRepository = koinInject()
 ) {
@@ -233,13 +233,13 @@ fun SubjectDetailScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Modal Dialog Chọn độ khó
+            // Modal Dialog Select Mode & Difficulty
             if (showDifficultyDialog) {
                 DifficultySelectionDialog(
                     onDismissRequest = { showDifficultyDialog = false },
-                    onSelectLevel = { level ->
+                    onSelectConfig = { level, modeKey ->
                         showDifficultyDialog = false
-                        onNavigateToRecording(subject.key, level.key)
+                        onNavigateToRecording(subject.key, level.key, modeKey)
                     }
                 )
             }

@@ -53,6 +53,7 @@ import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -69,6 +70,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -121,6 +124,74 @@ fun ChallengeScreen(
     val recorderController = rememberVideoRecorderController()
     var currentRecordingFile by remember { mutableStateOf<File?>(null) }
     var isUsingScreenRecorder by remember { mutableStateOf(false) }
+    var isFinalizingVideo by remember { mutableStateOf(false) }
+
+    fun startCameraFallback() {
+        isUsingScreenRecorder = false
+        val isVosk = viewModel.speechEngine.engineType == com.antigravity.noichuan.domain.service.SpeechEngineType.VOSK
+        if (isVosk) {
+            ScreenRecordManager.startPcmAudioOnly(context)
+        }
+        val file = recorderController.startRecording(
+            context = context,
+            withAudio = !isVosk,
+            onStart = { viewModel.toggleRecording() },
+            onError = { err ->
+                scope.launch { snackbarHostState.showSnackbar(err) }
+                if (!uiState.isRecording) {
+                    viewModel.toggleRecording()
+                }
+            }
+        )
+        currentRecordingFile = file
+    }
+
+    suspend fun finalizeActiveRecording(): String? {
+        val isVosk = viewModel.speechEngine.engineType == com.antigravity.noichuan.domain.service.SpeechEngineType.VOSK
+        return when {
+            isUsingScreenRecorder && ScreenRecordManager.isRecording -> {
+                suspendCancellableCoroutine { cont ->
+                    ScreenRecordManager.stop(context, viewModel.gameStateMachine.eventTimeline) { recordedFile ->
+                        val resolved = recordedFile?.path ?: currentRecordingFile?.takeIf { it.exists() && it.length() > 0 }?.path
+                        currentRecordingFile = null
+                        if (cont.isActive) cont.resume(resolved)
+                    }
+                }
+            }
+            recorderController.isRecordingActive -> {
+                val rawVideoPath = suspendCancellableCoroutine { cont ->
+                    recorderController.stopRecording { finalizedPath ->
+                        val resolved = finalizedPath ?: currentRecordingFile?.takeIf { it.exists() && it.length() > 0 }?.path
+                        if (cont.isActive) cont.resume(resolved)
+                    }
+                }
+                val finalPath = if (isVosk && rawVideoPath != null) {
+                    suspendCancellableCoroutine { cont ->
+                        ScreenRecordManager.finishCameraFallbackWithMuxing(
+                            context = context,
+                            rawVideo = File(rawVideoPath),
+                            videoStartNs = recorderController.recordingStartNanos,
+                            timeline = viewModel.gameStateMachine.eventTimeline
+                        ) { muxedFile ->
+                            if (cont.isActive) cont.resume(muxedFile?.path ?: rawVideoPath)
+                        }
+                    }
+                } else {
+                    rawVideoPath
+                }
+                currentRecordingFile = null
+                finalPath
+            }
+            else -> {
+                if (isVosk) {
+                    try { ScreenRecordManager.pcmAudioRecorder.stopRecording() } catch (_: Exception) {}
+                }
+                val existing = currentRecordingFile?.takeIf { it.exists() && it.length() > 0 }?.path
+                currentRecordingFile = null
+                existing
+            }
+        }
+    }
 
     val hasCameraPerm = ContextCompat.checkSelfPermission(
         context,
@@ -161,14 +232,8 @@ fun ChallengeScreen(
             )
             viewModel.toggleRecording()
         } else {
-            // Nếu người dùng từ chối cấp quyền quay màn hình, fallback về CameraX VideoCapture
-            isUsingScreenRecorder = false
-            val file = recorderController.startRecording(
-                context = context,
-                onStart = { viewModel.toggleRecording() },
-                onError = { viewModel.toggleRecording() }
-            )
-            currentRecordingFile = file
+            // Fallback to CameraX VideoCapture if Screen Capture permission is denied
+            startCameraFallback()
         }
     }
 
@@ -211,8 +276,20 @@ fun ChallengeScreen(
         viewModel.navEvents.collect { event ->
             when (event) {
                 is RecordingNavEvent.NavigateToPreview -> {
+                    val resolvedVideoPath = if (!event.videoPath.isNullOrBlank()) {
+                        event.videoPath
+                    } else if ((isUsingScreenRecorder && ScreenRecordManager.isRecording) || recorderController.isRecordingActive) {
+                        isFinalizingVideo = true
+                        try {
+                            finalizeActiveRecording()
+                        } finally {
+                            isFinalizingVideo = false
+                        }
+                    } else {
+                        null
+                    }
                     onNavigateToPreview(
-                        event.videoPath,
+                        resolvedVideoPath,
                         event.subjectKey,
                         event.levelKey,
                         event.durationSec,
@@ -229,15 +306,6 @@ fun ChallengeScreen(
     LaunchedEffect(uiState.statusMessage) {
         uiState.statusMessage?.let {
             snackbarHostState.showSnackbar(it)
-        }
-    }
-
-    // Khi bộ đếm thời gian hết hạn hoặc viewModel tự động dừng quay
-    LaunchedEffect(uiState.isRecording) {
-        if (!uiState.isRecording && ScreenRecordManager.isRecording) {
-            ScreenRecordManager.stop(context, viewModel.gameStateMachine.eventTimeline) { file ->
-                currentRecordingFile = null
-            }
         }
     }
 
@@ -542,28 +610,19 @@ fun ChallengeScreen(
                                 if (projectionManager != null) {
                                     projectionLauncher.launch(projectionManager.createScreenCaptureIntent())
                                 } else {
-                                    // Fallback sang camera thuần nếu không hỗ trợ projection
-                                    isUsingScreenRecorder = false
-                                    val file = recorderController.startRecording(
-                                        context = context,
-                                        onStart = { viewModel.toggleRecording() },
-                                        onError = { viewModel.toggleRecording() }
-                                    )
-                                    currentRecordingFile = file
+                                    // Fallback to CameraX VideoCapture when MediaProjection is unavailable
+                                    startCameraFallback()
                                 }
-                            } else {
-                                // Dừng quay — path truyền sang ResultScreen
-                                if (isUsingScreenRecorder && ScreenRecordManager.isRecording) {
-                                    ScreenRecordManager.stop(context, viewModel.gameStateMachine.eventTimeline) { recordedFile ->
-                                        val finalPath = recordedFile?.path ?: currentRecordingFile?.path
-                                        viewModel.toggleRecording(finalPath)
-                                        currentRecordingFile = null
+                            } else if (!isFinalizingVideo) {
+                                // Stop recording and finalize MP4 (A/V mux + SFX timeline) before ResultScreen
+                                scope.launch {
+                                    isFinalizingVideo = true
+                                    val finalPath = try {
+                                        finalizeActiveRecording()
+                                    } finally {
+                                        isFinalizingVideo = false
                                     }
-                                } else {
-                                    recorderController.stopRecording { _ ->
-                                        viewModel.toggleRecording(currentRecordingFile?.path)
-                                        currentRecordingFile = null
-                                    }
+                                    viewModel.toggleRecording(finalPath)
                                 }
                             }
                         },
@@ -698,6 +757,27 @@ fun ChallengeScreen(
                         }
                     }
                 )
+            }
+
+            // 11. Rendering Video Overlay when finalizing MP4 mux
+            if (isFinalizingVideo) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(color = Color(0xFF00FF66))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Rendering challenge video...",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
         }
     }

@@ -65,6 +65,17 @@ fun IsometricFilterCanvas(
         label = "bobbingOffset"
     )
 
+    // Horizontal shake oscillation shown on failure ("red text shakes when wrong")
+    val failureShakeX by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 65, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "failureShakeX"
+    )
+
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
@@ -87,8 +98,9 @@ fun IsometricFilterCanvas(
         val targetGateX = width * 0.38f
         val targetGateY = height * 0.74f
 
+        val shakeOffset = if (isGateFailure) failureShakeX else 0f
         val currentGateX = startGateX + (targetGateX - startGateX) * gateProgress.coerceAtMost(1.0f) -
-                if (gateProgress > 1.0f) (width * 0.4f * (gateProgress - 1.0f)) else 0f
+                (if (gateProgress > 1.0f) (width * 0.4f * (gateProgress - 1.0f)) else 0f) + shakeOffset
         val currentGateY = startGateY + (targetGateY - startGateY) * gateProgress.coerceAtMost(1.0f) +
                 if (gateProgress > 1.0f) (height * 0.3f * (gateProgress - 1.0f)) else 0f
 
@@ -412,6 +424,11 @@ private fun DrawScope.drawWordGate(
             typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
             textAlign = android.graphics.Paint.Align.CENTER
             setShadowLayer(4f, 2f, 2f, android.graphics.Color.BLACK)
+        }
+        val maxTextWidth = gateWidth * 0.92f
+        val measured = paint.measureText(wordText)
+        if (measured > maxTextWidth && measured > 0f) {
+            paint.textSize = (paint.textSize * (maxTextWidth / measured)).coerceAtLeast(12f)
         }
         drawContext.canvas.nativeCanvas.drawText(
             wordText,

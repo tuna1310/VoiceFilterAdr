@@ -32,14 +32,27 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executor
 
-/** Trạng thái video controller — được truyền vào / ra từ ChallengeScreen */
+/** Video recorder controller passed into / out of ChallengeScreen */
 @Stable
 class VideoRecorderController {
     internal var videoCapture: VideoCapture<Recorder>? = null
     internal var activeRecording: Recording? = null
+    @Volatile
+    var isRecordingActive: Boolean = false
+        private set
+    var recordingStartNanos: Long = 0L
+        private set
+    private var currentFile: File? = null
+    private var pendingFinalizeCallback: ((String?) -> Unit)? = null
 
-    /** Bắt đầu quay. Trả về File sẽ lưu, hoặc null nếu chưa sẵn sàng. */
-    fun startRecording(context: Context, onStart: () -> Unit, onError: (String) -> Unit): File? {
+    /** Starts recording. Returns the destination File, or null if camera is not ready. */
+    @android.annotation.SuppressLint("MissingPermission")
+    fun startRecording(
+        context: Context,
+        withAudio: Boolean = true,
+        onStart: () -> Unit,
+        onError: (String) -> Unit
+    ): File? {
         val vc = videoCapture ?: run {
             onError("Camera is not ready to record")
             return null
@@ -47,35 +60,57 @@ class VideoRecorderController {
         val dir = File(context.filesDir, "videos").also { it.mkdirs() }
         val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis())
         val file = File(dir, "noichuan_$name.mp4")
+        currentFile = file
+        pendingFinalizeCallback = null
 
-        activeRecording = vc.output
+        val pendingRecording = vc.output
             .prepareRecording(context, FileOutputOptions.Builder(file).build())
-            .withAudioEnabled()
-            .start(ContextCompat.getMainExecutor(context)) { event ->
-                when (event) {
-                    is VideoRecordEvent.Start -> onStart()
-                    is VideoRecordEvent.Finalize -> {
-                        if (event.hasError()) {
-                            onError("Video recording error: ${event.cause?.message}")
-                        }
-                    }
-                    else -> {}
+            .apply {
+                if (withAudio && ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.RECORD_AUDIO
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                ) {
+                    withAudioEnabled()
                 }
             }
+
+        recordingStartNanos = android.os.SystemClock.elapsedRealtimeNanos()
+        activeRecording = pendingRecording.start(ContextCompat.getMainExecutor(context)) { event ->
+            when (event) {
+                is VideoRecordEvent.Start -> {
+                    isRecordingActive = true
+                    onStart()
+                }
+                is VideoRecordEvent.Finalize -> {
+                    isRecordingActive = false
+                    activeRecording = null
+                    val finalizedPath = if (event.hasError()) {
+                        onError("Video recording error: ${event.cause?.message}")
+                        file.takeIf { it.exists() && it.length() > 0 }?.absolutePath
+                    } else {
+                        file.absolutePath
+                    }
+                    pendingFinalizeCallback?.invoke(finalizedPath)
+                    pendingFinalizeCallback = null
+                }
+                else -> {}
+            }
+        }
         return file
     }
 
-    /** Dừng quay, gọi callback với đường dẫn file khi hoàn tất. */
+    /** Stops recording and waits for VideoRecordEvent.Finalize before invoking onFinalized. */
     fun stopRecording(onFinalized: (String?) -> Unit) {
-        val rec = activeRecording ?: run {
-            onFinalized(null)
+        val rec = activeRecording
+        if (rec == null) {
+            isRecordingActive = false
+            val existingPath = currentFile?.takeIf { it.exists() && it.length() > 0 }?.absolutePath
+            onFinalized(existingPath)
             return
         }
-        // Lắng nghe VideoRecordEvent.Finalize để lấy đường dẫn thực
-        // (đã set trong startRecording; chỉ cần stop ở đây)
+        pendingFinalizeCallback = onFinalized
         rec.stop()
-        activeRecording = null
-        onFinalized(null) // path đã được set khi prepareRecording
     }
 }
 

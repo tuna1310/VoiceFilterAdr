@@ -92,13 +92,15 @@ class VoskSpeechRecognizerEngine(
     private val _unpackState = MutableStateFlow<ModelUnpackState>(ModelUnpackState.Idle)
     val unpackState: StateFlow<ModelUnpackState> = _unpackState.asStateFlow()
 
+    @Volatile
     private var isListening: Boolean = false
     private var currentGrammarJson: String = "[\"[unk]\"]"
 
+    private val recognizerLock = Any()
     private var voskModel: Model? = null
     private var recognizer: Recognizer? = null
 
-    // Silence Watchdog: Timeout sau 4s nếu không có giọng nói
+    // Silence Watchdog: Timeout after 4.0s if no speech or voice activity occurs
     private val silenceWatchdog = SilenceWatchdog(
         silenceTimeoutMs = 4000L,
         minSpeechRmsThreshold = 200f,
@@ -124,10 +126,30 @@ class VoskSpeechRecognizerEngine(
                     return@launch
                 }
 
-                withContext(Dispatchers.IO) {
-                    Log.d(TAG, "Khởi tạo Vosk Model từ ${effectiveModelDir.absolutePath}")
-                    voskModel = Model(effectiveModelDir.absolutePath)
-                    createRecognizerLocked()
+                val created = withContext(Dispatchers.IO) {
+                    synchronized(recognizerLock) {
+                        Log.d(TAG, "Initializing Vosk Model from ${effectiveModelDir.absolutePath}")
+                        try {
+                            recognizer?.close()
+                        } catch (_: Throwable) {
+                        } finally {
+                            recognizer = null
+                        }
+                        try {
+                            voskModel?.close()
+                        } catch (_: Throwable) {
+                        }
+                        voskModel = Model(effectiveModelDir.absolutePath)
+                        createRecognizerLocked()
+                    }
+                }
+
+                if (!created) {
+                    val msg = "Failed to create offline Vosk Recognizer."
+                    _unpackState.value = ModelUnpackState.Error(msg)
+                    emitEvent(SpeechEngineEvent.Error(msg, isRecoverable = true))
+                    onError(msg)
+                    return@launch
                 }
 
                 _unpackState.value = ModelUnpackState.Ready
@@ -144,21 +166,21 @@ class VoskSpeechRecognizerEngine(
     }
 
     /**
-     * Chạy hoàn toàn trên luồng I/O ngầm:
-     * - Kiểm tra phiên bản model đã giải nén.
-     * - Nếu phiên bản trùng khớp, bỏ qua việc sao chép.
-     * - Nếu chưa có hoặc phiên bản cũ, giải nén từng file kèm báo cáo tiến độ.
+     * Runs on a background I/O thread:
+     * - Checks unpacked model version.
+     * - Skips copying if version matches.
+     * - Unpacks all asset model files once while reporting progress.
      */
     private suspend fun prepareModelDirectoryInBackground(): File = withContext(Dispatchers.IO) {
         val destDir = File(context.filesDir, ASSET_MODEL_DIR)
 
         if (isModelVersionValid(destDir, MODEL_VERSION)) {
-            Log.d(TAG, "Model Vosk đã sẵn sàng (version $MODEL_VERSION). Bỏ qua giải nén.")
+            Log.d(TAG, "Vosk model ready (version $MODEL_VERSION). Skipping unpack.")
             _unpackState.value = ModelUnpackState.Ready
             return@withContext destDir
         }
 
-        Log.d(TAG, "Bắt đầu giải nén Model Vosk từ assets sang: ${destDir.absolutePath}")
+        Log.d(TAG, "Unpacking Vosk model from assets to: ${destDir.absolutePath}")
         _unpackState.value = ModelUnpackState.Preparing(0, "Scanning files...")
 
         val allAssetFiles = mutableListOf<String>()
@@ -182,9 +204,8 @@ class VoskSpeechRecognizerEngine(
             _unpackState.value = ModelUnpackState.Preparing(percent, destFile.name)
         }
 
-        // Ghi nhận phiên bản model
         File(destDir, VERSION_FILE_NAME).writeText(MODEL_VERSION)
-        Log.d(TAG, "Giải nén model Vosk hoàn tất ($copiedCount files, version $MODEL_VERSION).")
+        Log.d(TAG, "Unpacked Vosk model ($copiedCount files, version $MODEL_VERSION).")
         _unpackState.value = ModelUnpackState.Ready
         return@withContext destDir
     }
@@ -202,26 +223,45 @@ class VoskSpeechRecognizerEngine(
         }
     }
 
-    private fun createRecognizerLocked() {
-        val model = voskModel ?: return
-        try {
-            recognizer = Recognizer(model, SAMPLE_RATE, currentGrammarJson)
-            Log.d(TAG, "Vosk Recognizer khởi tạo thành công với grammar: $currentGrammarJson")
-        } catch (e: Exception) {
-            Log.e(TAG, "Lỗi tạo Vosk Recognizer: ${e.message}", e)
+    /**
+     * Creates a full-vocabulary offline Recognizer without calling Recognizer.setGrammar().
+     * In vosk-android 0.3.47, native Recognizer::SetGrm can raise an uncaught C++
+     * kaldi::KaldiFatalError (SIGABRT) when dynamically recompiling decoding FST graphs
+     * for arbitrary target words or mid-stream transitions. Full-vocabulary recognition
+     * avoids native FST crashes and allows PronunciationMatcher to score true phonemes.
+     */
+    private fun createRecognizerLocked(): Boolean {
+        val model = voskModel ?: return false
+        return try {
+            recognizer?.close()
+            recognizer = Recognizer(model, SAMPLE_RATE)
+            Log.d(TAG, "Vosk full-vocabulary Recognizer initialized at ${SAMPLE_RATE}Hz")
+            true
+        } catch (e: Throwable) {
+            recognizer = null
+            Log.e(TAG, "Failed to create Vosk Recognizer: ${e.message}", e)
+            false
         }
     }
 
     override fun setGrammar(targetWords: List<String>) {
-        currentGrammarJson = VoskGrammarBuilder.buildGrammarJson(targetWords)
-        Log.d(TAG, "Cập nhật Vosk grammar: $currentGrammarJson")
-        
-        recognizer?.let { rec ->
-            try {
-                rec.setGrammar(currentGrammarJson)
-            } catch (e: Throwable) {
-                Log.w(TAG, "setGrammar không tương thích, tái tạo recognizer: ${e.message}")
-                createRecognizerLocked()
+        val nextGrammarJson = VoskGrammarBuilder.buildGrammarJson(targetWords)
+        synchronized(recognizerLock) {
+            val changed = nextGrammarJson != currentGrammarJson
+            currentGrammarJson = nextGrammarJson
+            Log.d(TAG, "Updated target grammar metadata: $currentGrammarJson")
+
+            // Reset the active decoder state when switching to a new target word so
+            // residual partial hypotheses from the previous word do not bleed over.
+            if (isListening && changed && targetWords.isNotEmpty()) {
+                recognizer?.let { rec ->
+                    try {
+                        rec.reset()
+                    } catch (e: Throwable) {
+                        Log.w(TAG, "Recognizer reset failed, recreating recognizer: ${e.message}")
+                        createRecognizerLocked()
+                    }
+                }
             }
         }
     }
@@ -229,72 +269,101 @@ class VoskSpeechRecognizerEngine(
     override fun feedPcmData(buffer: ShortArray, readSize: Int) {
         if (!isListening || readSize <= 0) return
 
-        // 1. Giám sát khoảng lặng & tính RMS
+        // 1. Update silence watchdog & RMS energy
         silenceWatchdog.processPcmChunk(buffer, readSize)
 
-        // 2. Chuyển vào Vosk acceptWaveForm
-        val rec = recognizer ?: return
-        try {
-            val isFinal = rec.acceptWaveForm(buffer, readSize)
-            if (isFinal) {
-                val text = parseResultText(rec.result)
-                if (text.isNotBlank()) {
-                    silenceWatchdog.onSpeechRecognized()
-                    emitEvent(SpeechEngineEvent.FinalResult(text))
+        // 2. Feed Vosk acceptWaveForm under recognizerLock to prevent native JNI races
+        var finalText: String? = null
+        var partialText: String? = null
+
+        synchronized(recognizerLock) {
+            if (!isListening) return
+            val rec = recognizer ?: return
+            try {
+                val isFinal = rec.acceptWaveForm(buffer, readSize)
+                if (isFinal) {
+                    val text = parseResultText(rec.result)
+                    if (text.isNotBlank()) {
+                        finalText = text
+                    }
+                } else {
+                    val partial = parsePartialText(rec.partialResult)
+                    if (partial.isNotBlank()) {
+                        partialText = partial
+                    }
                 }
-            } else {
-                val partial = parsePartialText(rec.partialResult)
-                if (partial.isNotBlank()) {
-                    silenceWatchdog.onSpeechRecognized()
-                    emitEvent(SpeechEngineEvent.PartialResult(partial))
-                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "Error in Vosk acceptWaveForm: ${e.message}", e)
             }
-        } catch (e: Throwable) {
-            Log.e(TAG, "Lỗi trong acceptWaveForm: ${e.message}", e)
+        }
+
+        finalText?.let { text ->
+            silenceWatchdog.onSpeechRecognized()
+            emitEvent(SpeechEngineEvent.FinalResult(text))
+        }
+        partialText?.let { partial ->
+            silenceWatchdog.onSpeechRecognized()
+            emitEvent(SpeechEngineEvent.PartialResult(partial))
         }
     }
 
     override fun startListening() {
-        if (isListening) return
-        isListening = true
+        synchronized(recognizerLock) {
+            if (isListening) return
+            if (recognizer == null && voskModel != null) {
+                createRecognizerLocked()
+            } else {
+                try {
+                    recognizer?.reset()
+                } catch (_: Throwable) {
+                }
+            }
+            isListening = true
+        }
         silenceWatchdog.start()
         emitEvent(SpeechEngineEvent.Listening)
-        Log.d(TAG, "Vosk bắt đầu lắng nghe với grammar: $currentGrammarJson")
+        Log.d(TAG, "Vosk started listening (target metadata: $currentGrammarJson)")
     }
 
     override fun stopListening() {
-        if (!isListening) return
-        isListening = false
-        silenceWatchdog.stop()
+        var trailingFinal: String? = null
+        synchronized(recognizerLock) {
+            if (!isListening) return
+            isListening = false
+            silenceWatchdog.stop()
 
-        recognizer?.let { rec ->
-            try {
-                val text = parseResultText(rec.finalResult)
-                if (text.isNotBlank()) {
-                    emitEvent(SpeechEngineEvent.FinalResult(text))
+            recognizer?.let { rec ->
+                try {
+                    val text = parseResultText(rec.finalResult)
+                    if (text.isNotBlank()) {
+                        trailingFinal = text
+                    }
+                } catch (e: Throwable) {
+                    Log.e(TAG, "Error fetching Vosk finalResult: ${e.message}")
                 }
-            } catch (e: Throwable) {
-                Log.e(TAG, "Lỗi khi lấy finalResult Vosk: ${e.message}")
             }
         }
-        Log.d(TAG, "Vosk đã dừng lắng nghe")
+        trailingFinal?.let { emitEvent(SpeechEngineEvent.FinalResult(it)) }
+        Log.d(TAG, "Vosk stopped listening")
     }
 
     override fun destroy() {
         stopListening()
-        try {
-            recognizer?.close()
-        } catch (e: Exception) {
-            Log.w(TAG, "Lỗi đóng recognizer: ${e.message}")
-        } finally {
-            recognizer = null
-        }
-        try {
-            voskModel?.close()
-        } catch (e: Exception) {
-            Log.w(TAG, "Lỗi đóng model: ${e.message}")
-        } finally {
-            voskModel = null
+        synchronized(recognizerLock) {
+            try {
+                recognizer?.close()
+            } catch (e: Throwable) {
+                Log.w(TAG, "Error closing recognizer: ${e.message}")
+            } finally {
+                recognizer = null
+            }
+            try {
+                voskModel?.close()
+            } catch (e: Throwable) {
+                Log.w(TAG, "Error closing model: ${e.message}")
+            } finally {
+                voskModel = null
+            }
         }
     }
 

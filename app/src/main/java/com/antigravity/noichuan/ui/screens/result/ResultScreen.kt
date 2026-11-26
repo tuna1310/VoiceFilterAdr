@@ -389,7 +389,7 @@ fun ResultScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Nút Retake
+                    // Retake Button
                     OutlinedButton(
                         onClick = onRetake,
                         modifier = Modifier
@@ -412,7 +412,7 @@ fun ResultScreen(
                         )
                     }
 
-                    // Nút Save to My Videos & Gallery
+                    // Save to My Videos & Gallery
                     Button(
                         onClick = {
                             scope.launch {
@@ -425,7 +425,6 @@ fun ResultScreen(
                                     }
                                 }
 
-                                // 1. Lưu vào Room DB
                                 val entity = RecordedVideoEntity(
                                     subjectKey = subject.key,
                                     subjectTitle = subject.titleVi,
@@ -436,7 +435,6 @@ fun ResultScreen(
                                 )
                                 videoRepository.saveVideo(entity)
 
-                                // 2. Xuất bản copy ra thư viện máy (Movies/NoiChuan)
                                 withContext(Dispatchers.IO) {
                                     exportVideoToGallery(context, targetFile)
                                 }
@@ -468,39 +466,21 @@ fun ResultScreen(
                         )
                     }
 
-                    // Nút Share
+                    // System Share Button
                     Box(
                         modifier = Modifier
                             .size(52.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFE8F1FD))
                             .clickable {
-                                try {
-                                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                        if (hasRealVideo && videoPath != null) {
-                                            val file = File(videoPath)
-                                            val contentUri = FileProvider.getUriForFile(
-                                                context,
-                                                "${context.packageName}.fileprovider",
-                                                file
-                                            )
-                                            type = "video/mp4"
-                                            putExtra(Intent.EXTRA_STREAM, contentUri)
-                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                        } else {
-                                            type = "text/plain"
-                                        }
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "I just completed the ${subject.titleVi} pronunciation challenge on Voice Filter: Speak Challenge!"
-                                        )
-                                    }
-                                    context.startActivity(Intent.createChooser(shareIntent, "Share Challenge Video"))
-                                } catch (e: Exception) {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Could not share: ${e.message}")
-                                    }
-                                }
+                                shareToSocialApp(
+                                    context = context,
+                                    videoPath = videoPath,
+                                    hasRealVideo = hasRealVideo,
+                                    caption = "I just completed the ${subject.titleVi} pronunciation challenge ($score pts, $wordsCompleted words) on Voice Filter: Speak Challenge!",
+                                    candidatePackages = emptyList(),
+                                    onError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
+                                )
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -514,6 +494,65 @@ fun ResultScreen(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
+
+                // One-Tap Quick Social Share Bar (TikTok, Instagram, Facebook)
+                val shareCaption = "I just completed the ${subject.titleVi} pronunciation challenge ($score pts, $wordsCompleted words) on Voice Filter: Speak Challenge!"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SocialShareChip(
+                        label = "TikTok",
+                        containerColor = Color(0xFF111827),
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            shareToSocialApp(
+                                context = context,
+                                videoPath = videoPath,
+                                hasRealVideo = hasRealVideo,
+                                caption = shareCaption,
+                                candidatePackages = listOf("com.zhiliaoapp.musically", "com.ss.android.ugc.trill"),
+                                appDisplayName = "TikTok",
+                                onError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
+                            )
+                        }
+                    )
+                    SocialShareChip(
+                        label = "Instagram",
+                        containerColor = Color(0xFFE1306C),
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            shareToSocialApp(
+                                context = context,
+                                videoPath = videoPath,
+                                hasRealVideo = hasRealVideo,
+                                caption = shareCaption,
+                                candidatePackages = listOf("com.instagram.android"),
+                                appDisplayName = "Instagram",
+                                onError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
+                            )
+                        }
+                    )
+                    SocialShareChip(
+                        label = "Facebook",
+                        containerColor = Color(0xFF1877F2),
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            shareToSocialApp(
+                                context = context,
+                                videoPath = videoPath,
+                                hasRealVideo = hasRealVideo,
+                                caption = shareCaption,
+                                candidatePackages = listOf("com.facebook.katana", "com.facebook.lite"),
+                                appDisplayName = "Facebook",
+                                onError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
+                            )
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
             }
 
             SnackbarHost(
@@ -526,8 +565,105 @@ fun ResultScreen(
     }
 }
 
+@Composable
+private fun SocialShareChip(
+    label: String,
+    containerColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .height(40.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(20.dp),
+        color = containerColor
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Share,
+                contentDescription = "Share to $label",
+                tint = Color.White,
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+private fun buildShareIntent(
+    context: Context,
+    videoPath: String?,
+    hasRealVideo: Boolean,
+    caption: String
+): Intent {
+    return Intent(Intent.ACTION_SEND).apply {
+        if (hasRealVideo && videoPath != null) {
+            val file = File(videoPath)
+            val contentUri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+            type = "video/mp4"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } else {
+            type = "text/plain"
+        }
+        putExtra(Intent.EXTRA_TEXT, caption)
+    }
+}
+
+private fun shareToSocialApp(
+    context: Context,
+    videoPath: String?,
+    hasRealVideo: Boolean,
+    caption: String,
+    candidatePackages: List<String>,
+    appDisplayName: String? = null,
+    onError: (String) -> Unit
+) {
+    try {
+        for (pkg in candidatePackages) {
+            try {
+                val targeted = buildShareIntent(context, videoPath, hasRealVideo, caption).apply {
+                    setPackage(pkg)
+                }
+                context.startActivity(targeted)
+                return
+            } catch (_: android.content.ActivityNotFoundException) {
+                // Try next package variant or fall back to chooser below
+            }
+        }
+        if (candidatePackages.isNotEmpty() && appDisplayName != null) {
+            onError("$appDisplayName is not installed — opening share sheet")
+        }
+        val chooserIntent = Intent.createChooser(
+            buildShareIntent(context, videoPath, hasRealVideo, caption),
+            "Share Challenge Video"
+        )
+        context.startActivity(chooserIntent)
+    } catch (e: Exception) {
+        onError("Could not share: ${e.message}")
+    }
+}
+
 /**
- * Xuất video ra thư viện máy công khai (Movies/NoiChuan) qua MediaStore để xuất hiện trong Google Photos/Gallery
+ * Exports video to the public MediaStore directory (Movies/NoiChuan) for Gallery / Photos.
  */
 private fun exportVideoToGallery(context: Context, sourceFile: File): Uri? {
     return try {

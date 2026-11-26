@@ -115,9 +115,8 @@ fun AppNavHost(
             SubjectDetailScreen(
                 subjectKey = subjectKey,
                 onBack = { navController.popBackStack() },
-                onNavigateToRecording = { subKey, levelKey ->
-                    val subject = Subject.fromKey(subKey)
-                    navController.navigate(Screen.Challenge.createRoute(subKey, levelKey, null, subject.defaultGameMode))
+                onNavigateToRecording = { subKey, levelKey, modeKey ->
+                    navController.navigate(Screen.Challenge.createRoute(subKey, levelKey, null, modeKey))
                 }
             )
         }
